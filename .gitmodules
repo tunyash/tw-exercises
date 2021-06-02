@@ -1,3 +1,6 @@
 [submodule "graph"]
 	path = graph
 	url = https://github.com/boostorg/graph.git
+[submodule "doctest"]
+	path = doctest
+	url = https://github.com/onqtam/doctest.git
