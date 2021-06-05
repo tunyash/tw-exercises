@@ -1,12 +1,11 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include <iostream>
 #include "1.h"
 #include <cstdio>
 
 using namespace std;
 
-int main() {
-	freopen("input.txt", "r", stdin);
+int main(int argc, char *argv[]) {
+	if (argc > 1) freopen(argv[1], "r", stdin);
 
 	int n, m, k; cin >> n >> m >> k;
 	vector<pair<int, int>> edges;
