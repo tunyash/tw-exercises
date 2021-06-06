@@ -82,7 +82,6 @@ TEST_CASE("Not all vertices") {
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
-        cout << ex.what() << "\n";
     }
     CHECK(pass);
 }
@@ -101,7 +100,6 @@ TEST_CASE("Not all edges") {
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
-        cout << ex.what() << "\n";
     }
     CHECK(pass);
 }
@@ -120,7 +118,6 @@ TEST_CASE("Third rule exception") {
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
-        cout << ex.what() << "\n";
     }
     CHECK(pass);
 }
@@ -139,7 +136,6 @@ TEST_CASE("Negative vertices") {
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
-        cout << ex.what() << "\n";
     }
     CHECK(pass);
 }

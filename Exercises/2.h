@@ -6,7 +6,7 @@ class PathDecomposition {
 
 	typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 
-	std::vector<std::vector<int>> _bugs;
+	std::vector<std::vector<int>> _bags;
 	Graph _g;
 
 public:
@@ -16,18 +16,21 @@ public:
 	Thrown when path-width decomposition is incorrect
 	*/
 	private:
+		int type = 0; // 0 or 1
+		int i, j, k;
 		std::string _msg = "";
 	public:
 		CorectnessException(std::string msg) : _msg(msg) {}
 		~CorectnessException() throw() {}
 		const char* what() const throw() {
-			return _msg.c_str();
+			return ("Type of exception is " + to_string(type) 
+				+ "\n" + _msg).c_str();
 		}
 	};
 
-	PathDecomposition(std::vector<std::vector<int>> bugs, Graph g);
+	PathDecomposition(std::vector<std::vector<int>> bags, Graph g);
 	/*
-	Constructor creates path-width decomposition where |path[i]| is i-th bug of decomposition.
+	Constructor creates path-width decomposition where |path[i]| is i-th bag of decomposition.
 	|path| is path-width decompostion of graph |g|.
 	@exceptions throw CorrectnessException if decomposition is not correct
 	*/

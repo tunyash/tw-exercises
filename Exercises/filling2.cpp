@@ -10,13 +10,13 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Grap
 bool PathDecomposition::Check() {
 	int n = boost::num_vertices(_g);
 
-	for (std::vector<int> bug : _bugs) {
-		std::sort(bug.begin(), bug.end());
-		bug.resize(std::unique(bug.begin(), bug.end()) - bug.begin());
-		//Erasing non-unique vertices from bugs
-		for (int v : bug) {
+	for (std::vector<int> bag : _bags) {
+		std::sort(bag.begin(), bag.end());
+		bag.resize(std::unique(bag.begin(), bag.end()) - bag.begin());
+		//Erasing non-unique vertices from bags
+		for (int v : bag) {
 			if (v < 0 || v >= n)
-				throw PathDecomposition::CorectnessException("Vertices in bugs are not in [0; |V(_g)|)");
+				throw PathDecomposition::CorectnessException("Vertices in bags are not in [0; |V(_g)|)");
 		}
 	}
 
@@ -24,8 +24,8 @@ bool PathDecomposition::Check() {
 	std::vector<int> left(n, n + 1);
 	std::vector<int> right(n, -1);
 	
-	for (int i = 0; i < _bugs.size(); ++i) {
-		for (int v : _bugs[i]) {
+	for (int i = 0; i < _bags.size(); ++i) {
+		for (int v : _bags[i]) {
 			sum[v]++;
 			left[v] = std::min(left[v], i);
 			right[v] = std::max(right[v], i);
@@ -37,26 +37,18 @@ bool PathDecomposition::Check() {
 		if (right[i] - left[i] + 1 != sum[i]) {
 			int j = left[i];
 			for (; 
-				std::find(_bugs[j].begin(), _bugs[j].end(), i) != _bugs[j].end(); 
+				std::find(_bags[j].begin(), _bags[j].end(), i) != _bags[j].end(); 
 				++j);
-			std::string msg = "In Decomposition _bugs["
-				+ std::to_string(left[i])
-				+ "] and _bugs["
-				+ std::to_string(right[i])
-				+ "] contains "
-				+ std::to_string(i)
-				+ " but _bugs["
-				+ std::to_string(j)
-				+ "] does not";
+			std::string msg = "In Decomposition _bags[i] and _bags[k] contains u but _bags[j] does not";
 			throw PathDecomposition::CorectnessException(msg);
 		}
 	}
 
 	Graph path_g(n);
 	
-	for (std::vector<int> bug : _bugs) {
-		for (int v : bug) {
-			for (int u : bug) {
+	for (std::vector<int> bag : _bags) {
+		for (int v : bag) {
+			for (int u : bag) {
 				if (u == v) continue;
 				boost::add_edge(u, v, path_g);
 			}
@@ -71,6 +63,6 @@ bool PathDecomposition::Check() {
 	}
 }
 
-PathDecomposition::PathDecomposition(std::vector<std::vector<int>> bugs, Graph g): _bugs(bugs), _g(g) {
+PathDecomposition::PathDecomposition(std::vector<std::vector<int>> bags, Graph g): _bags(bags), _g(g) {
 	Check();
 }
