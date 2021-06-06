@@ -6,7 +6,7 @@ class PathDecomposition {
 
 	typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 
-	std::vector<std::vector<int>> _path;
+	std::vector<std::vector<int>> _bugs;
 	Graph _g;
 
 public:
@@ -25,7 +25,7 @@ public:
 		}
 	};
 
-	PathDecomposition(std::vector<std::vector<int>> path, Graph g);
+	PathDecomposition(std::vector<std::vector<int>> bugs, Graph g);
 	/*
 	Constructor creates path-width decomposition where |path[i]| is i-th bug of decomposition.
 	|path| is path-width decompostion of graph |g|.

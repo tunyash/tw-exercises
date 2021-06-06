@@ -82,10 +82,9 @@ TEST_CASE("Not all vertices") {
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
-        msg = ex.what();
+        cout << ex.what() << "\n";
     }
     CHECK(pass);
-    CHECK(msg == "Not all vertices are in path-width decomposition");
 }
 
 TEST_CASE("Not all edges") {
@@ -102,10 +101,9 @@ TEST_CASE("Not all edges") {
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
-        msg = ex.what();
+        cout << ex.what() << "\n";
     }
     CHECK(pass);
-    CHECK(msg == "Not all edges are in path-width decomposition");
 }
 
 TEST_CASE("Third rule exception") {
@@ -122,10 +120,9 @@ TEST_CASE("Third rule exception") {
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
-        msg = ex.what();
+        cout << ex.what() << "\n";
     }
     CHECK(pass);
-    CHECK(msg == "In Decomposition exists vertex u and i < j < k such that bug[i] and bug[k] contains u but bug[j] doesn't");
 }
 
 TEST_CASE("Negative vertices") {
@@ -142,8 +139,7 @@ TEST_CASE("Negative vertices") {
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
-        msg = ex.what();
+        cout << ex.what() << "\n";
     }
     CHECK(pass);
-    CHECK(msg == "Vertices in bugs are not in [0; |V(_g)|)");
 }

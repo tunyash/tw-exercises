@@ -10,7 +10,7 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Grap
 bool PathDecomposition::Check() {
 	int n = boost::num_vertices(_g);
 
-	for (std::vector<int> bug : _path) {
+	for (std::vector<int> bug : _bugs) {
 		std::sort(bug.begin(), bug.end());
 		bug.resize(std::unique(bug.begin(), bug.end()) - bug.begin());
 		//Erasing non-unique vertices from bugs
@@ -24,8 +24,8 @@ bool PathDecomposition::Check() {
 	std::vector<int> left(n, n + 1);
 	std::vector<int> right(n, -1);
 	
-	for (int i = 0; i < _path.size(); ++i) {
-		for (int v : _path[i]) {
+	for (int i = 0; i < _bugs.size(); ++i) {
+		for (int v : _bugs[i]) {
 			sum[v]++;
 			left[v] = std::min(left[v], i);
 			right[v] = std::max(right[v], i);
@@ -34,12 +34,27 @@ bool PathDecomposition::Check() {
 
 	for (int i = 0; i < n; ++i) {
 		if (sum[i] == 0) throw PathDecomposition::CorectnessException("Not all vertices are in path-width decomposition");
-		if (right[i] - left[i] + 1 != sum[i]) throw PathDecomposition::CorectnessException("In Decomposition exists vertex u and i < j < k such that bug[i] and bug[k] contains u but bug[j] doesn't");
+		if (right[i] - left[i] + 1 != sum[i]) {
+			int j = left[i];
+			for (; 
+				std::find(_bugs[j].begin(), _bugs[j].end(), i) != _bugs[j].end(); 
+				++j);
+			std::string msg = "In Decomposition _bugs["
+				+ std::to_string(left[i])
+				+ "] and _bugs["
+				+ std::to_string(right[i])
+				+ "] contains "
+				+ std::to_string(i)
+				+ " but _bugs["
+				+ std::to_string(j)
+				+ "] does not";
+			throw PathDecomposition::CorectnessException(msg);
+		}
 	}
 
 	Graph path_g(n);
 	
-	for (std::vector<int> bug : _path) {
+	for (std::vector<int> bug : _bugs) {
 		for (int v : bug) {
 			for (int u : bug) {
 				if (u == v) continue;
@@ -56,6 +71,6 @@ bool PathDecomposition::Check() {
 	}
 }
 
-PathDecomposition::PathDecomposition(std::vector<std::vector<int>> path, Graph g): _path(path), _g(g) {
+PathDecomposition::PathDecomposition(std::vector<std::vector<int>> bugs, Graph g): _bugs(bugs), _g(g) {
 	Check();
 }
