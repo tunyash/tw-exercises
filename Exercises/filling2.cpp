@@ -15,7 +15,7 @@ bool PathDecomposition::Check() {
 		bug.resize(std::unique(bug.begin(), bug.end()) - bug.begin());
 		//Erasing non-unique vertices from bugs
 		for (int v : bug) {
-			if (v < 0 && v >= n)
+			if (v < 0 || v >= n)
 				throw PathDecomposition::CorectnessException("Vertices in bugs are not in [0; |V(_g)|)");
 		}
 	}

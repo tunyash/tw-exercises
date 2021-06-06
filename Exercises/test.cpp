@@ -76,14 +76,16 @@ TEST_CASE("Not all vertices") {
     add_edge(3, 2, g);
 
     bool pass = 0;
+    string msg;
     try {
         PathDecomposition({ {0, 1, 2} }, g);
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
-        cout << ex.what() << "\n";
+        msg = ex.what();
     }
     CHECK(pass);
+    CHECK(msg == "Not all vertices are in path-width decomposition");
 }
 
 TEST_CASE("Not all edges") {
@@ -94,32 +96,16 @@ TEST_CASE("Not all edges") {
     add_edge(3, 2, g);
 
     bool pass = 0;
+    string msg;
     try {
         PathDecomposition({ {0}, {1}, {2}, {3} }, g);
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
-        cout << ex.what() << "\n";
+        msg = ex.what();
     }
     CHECK(pass);
-}
-
-TEST_CASE("Not all edges") {
-    Graph g(/*n=*/4);
-    add_edge(0, 1, g);
-    add_edge(0, 2, g);
-    add_edge(3, 1, g);
-    add_edge(3, 2, g);
-
-    bool pass = 0;
-    try {
-        PathDecomposition({ {0}, {1}, {2}, {3} }, g);
-    }
-    catch (PathDecomposition::CorectnessException ex) {
-        pass = 1;
-        cout << ex.what() << "\n";
-    }
-    CHECK(pass);
+    CHECK(msg == "Not all edges are in path-width decomposition");
 }
 
 TEST_CASE("Third rule exception") {
@@ -130,12 +116,34 @@ TEST_CASE("Third rule exception") {
     add_edge(3, 2, g);
 
     bool pass = 0;
+    string msg;
     try {
         PathDecomposition({ {0, 1}, {1, 2}, {2, 3}, {3, 0} }, g);
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
-        cout << ex.what() << "\n";
+        msg = ex.what();
     }
     CHECK(pass);
+    CHECK(msg == "In Decomposition exists vertex u and i < j < k such that bug[i] and bug[k] contains u but bug[j] doesn't");
+}
+
+TEST_CASE("Negative vertices") {
+    Graph g(/*n=*/4);
+    add_edge(0, 1, g);
+    add_edge(0, 2, g);
+    add_edge(3, 1, g);
+    add_edge(3, 2, g);
+
+    bool pass = 0;
+    string msg;
+    try {
+        PathDecomposition({ {-1} }, g);
+    }
+    catch (PathDecomposition::CorectnessException ex) {
+        pass = 1;
+        msg = ex.what();
+    }
+    CHECK(pass);
+    CHECK(msg == "Vertices in bugs are not in [0; |V(_g)|)");
 }
