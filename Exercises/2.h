@@ -16,14 +16,15 @@ public:
 	Thrown when path-width decomposition is incorrect
 	*/
 	private:
-		int type = 0; // 0 or 1
-		int i, j, k;
-		std::string _msg = "";
 	public:
+		int type = 0; // 0 or 1
+		int i, j, k, u;
+		std::string _msg = "";
+
 		CorectnessException(std::string msg) : _msg(msg) {}
 		~CorectnessException() throw() {}
 		const char* what() const throw() {
-			return ("Type of exception is " + to_string(type) 
+			return ("Type of exception is " + std::to_string(type) 
 				+ "\n" + _msg).c_str();
 		}
 	};

@@ -40,7 +40,12 @@ bool PathDecomposition::Check() {
 				std::find(_bags[j].begin(), _bags[j].end(), i) != _bags[j].end(); 
 				++j);
 			std::string msg = "In Decomposition _bags[i] and _bags[k] contains u but _bags[j] does not";
-			throw PathDecomposition::CorectnessException(msg);
+			auto ex = PathDecomposition::CorectnessException(msg);
+			ex.type = 1;
+			ex.i = left[i];
+			ex.j = j;
+			ex.k = right[i];
+			ex.u = i;
 		}
 	}
 
