@@ -17,16 +17,23 @@ public:
 	*/
 	private:
 	public:
-		int type = 0; // 0 or 1
-		int i, j, k, u;
-		std::string _msg = "";
+		int _error_type;
+		int _i, _j, _k, _u;
 
-		CorectnessException(std::string msg) : _msg(msg) {}
+		CorectnessException(int error_type);
+		/*
+		@error_type == 0 used when in graph |_g| exists edge (v, u) but in |_bags| there is no bag that contains {v, u}
+		@error_type == 1 used when in |_bags| exists vertex |v| that does not belong to [0; |V(_g)|)
+		@error_type == 3 used when exists vertex |v| that does not belong to |_bags|
+		*/
+		CorectnessException(int i, int j, int k, int u);
+		/*
+		This is used only for error_type == 2
+		@error_type == 2 used when _bags[i] and _bags[k] contains vertex |v| but _bags[j] does not.
+		i < j < k
+		*/
 		~CorectnessException() throw() {}
-		const char* what() const throw() {
-			return ("Type of exception is " + std::to_string(type) 
-				+ "\n" + _msg).c_str();
-		}
+		const char* what() const throw();
 	};
 
 	PathDecomposition(std::vector<std::vector<int>> bags, Graph g);

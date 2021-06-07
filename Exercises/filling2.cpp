@@ -7,6 +7,39 @@
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 
+enum error_types {
+	_edges = 0,
+	_negative_vertices = 1,
+	_continuity = 2,
+	_vertices = 3
+};
+
+PathDecomposition::CorectnessException::CorectnessException(int error_type): _error_type(error_type) {}
+PathDecomposition::CorectnessException::CorectnessException
+(int i, int j, int k, int u): 
+_error_type(_continuity), _i(i), _j(j), _k(k), _u(u) {}
+
+const char *PathDecomposition::CorectnessException::what() const throw() {
+	switch (_error_type) {
+	case _edges:
+		return "Not all edges are in path-width decomposition";
+	case _negative_vertices:
+		return "Vertices in bags are not in [0; |V(_g)|)";
+	case _continuity:
+		return ("_bags["
+			+ std::to_string(_i)
+			+ "] and _bags["
+			+ std::to_string(_k)
+			+ "] contains "
+			+ std::to_string(_u)
+			+ " but _bags["
+			+ std::to_string(_j)
+			+ "] does not").c_str();
+	case _vertices:
+		return "Not all vertices are in path-width decomposition";
+	}
+}
+
 bool PathDecomposition::Check() {
 	int n = boost::num_vertices(_g);
 
@@ -16,7 +49,7 @@ bool PathDecomposition::Check() {
 		//Erasing non-unique vertices from bags
 		for (int v : bag) {
 			if (v < 0 || v >= n)
-				throw PathDecomposition::CorectnessException("Vertices in bags are not in [0; |V(_g)|)");
+				throw PathDecomposition::CorectnessException(_negative_vertices);
 		}
 	}
 
@@ -33,19 +66,13 @@ bool PathDecomposition::Check() {
 	}
 
 	for (int i = 0; i < n; ++i) {
-		if (sum[i] == 0) throw PathDecomposition::CorectnessException("Not all vertices are in path-width decomposition");
+		if (sum[i] == 0) throw PathDecomposition::CorectnessException(_vertices);
 		if (right[i] - left[i] + 1 != sum[i]) {
 			int j = left[i];
 			for (; 
 				std::find(_bags[j].begin(), _bags[j].end(), i) != _bags[j].end(); 
 				++j);
-			std::string msg = "In Decomposition _bags[i] and _bags[k] contains u but _bags[j] does not";
-			auto ex = PathDecomposition::CorectnessException(msg);
-			ex.type = 1;
-			ex.i = left[i];
-			ex.j = j;
-			ex.k = right[i];
-			ex.u = i;
+			throw PathDecomposition::CorectnessException(left[i], j, right[i], i);
 		}
 	}
 
@@ -63,7 +90,7 @@ bool PathDecomposition::Check() {
 	for (int v = 0; v < n; ++v) {
 		for (auto it = boost::adjacent_vertices(v, _g).first; it != boost::adjacent_vertices(v, _g).second; ++it) {
 			if (std::find(boost::adjacent_vertices(v, path_g).first, boost::adjacent_vertices(v, path_g).second, *it) ==
-				boost::adjacent_vertices(v, path_g).second) throw PathDecomposition::CorectnessException("Not all edges are in path-width decomposition");
+				boost::adjacent_vertices(v, path_g).second) throw PathDecomposition::CorectnessException(_edges);
 		}
 	}
 }
