@@ -11,6 +11,13 @@ class PathDecomposition {
 
 public:
 
+	enum error_types {
+		EDGES = 0,
+		NEGATIVE_VERTICES = 1,
+		INCONTINUITY = 2,
+		VERTICES = 3
+	};
+
 	struct CorectnessException : public std::exception{
 	/*
 	Thrown when path-width decomposition is incorrect
@@ -18,7 +25,7 @@ public:
 	private:
 	public:
 		int _error_type;
-		int _i, _j, _k, _u;
+		int _bag_i, _bag_j, _bag_k, _violating_node;
 
 		CorectnessException(int error_type);
 		/*
@@ -38,8 +45,8 @@ public:
 
 	PathDecomposition(std::vector<std::vector<int>> bags, Graph g);
 	/*
-	Constructor creates path-width decomposition where |path[i]| is i-th bag of decomposition.
-	|path| is path-width decompostion of graph |g|.
+	Constructor creates path-width decomposition where |bags[i]| is i-th bag of decomposition.
+	|bags| is path-width decompostion of graph |g|.
 	@exceptions throw CorrectnessException if decomposition is not correct
 	*/
 

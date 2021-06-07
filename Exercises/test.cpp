@@ -82,6 +82,7 @@ TEST_CASE("Not all vertices") {
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
+        pass &= ex._error_type == PathDecomposition::VERTICES;
     }
     CHECK(pass);
 }
@@ -100,11 +101,12 @@ TEST_CASE("Not all edges") {
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
+        pass &= ex._error_type == PathDecomposition::EDGES;
     }
     CHECK(pass);
 }
 
-TEST_CASE("Third rule exception") {
+TEST_CASE("Incountinuty exception") {
     Graph g(/*n=*/4);
     add_edge(0, 1, g);
     add_edge(0, 2, g);
@@ -118,6 +120,7 @@ TEST_CASE("Third rule exception") {
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
+        pass &= ex._error_type == PathDecomposition::INCONTINUITY;
     }
     CHECK(pass);
 }
@@ -136,6 +139,7 @@ TEST_CASE("Negative vertices") {
     }
     catch (PathDecomposition::CorectnessException ex) {
         pass = 1;
+        pass &= ex._error_type == PathDecomposition::NEGATIVE_VERTICES;
     }
     CHECK(pass);
 }

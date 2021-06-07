@@ -7,35 +7,28 @@
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 
-enum error_types {
-	_edges = 0,
-	_negative_vertices = 1,
-	_continuity = 2,
-	_vertices = 3
-};
-
 PathDecomposition::CorectnessException::CorectnessException(int error_type): _error_type(error_type) {}
 PathDecomposition::CorectnessException::CorectnessException
 (int i, int j, int k, int u): 
-_error_type(_continuity), _i(i), _j(j), _k(k), _u(u) {}
+_error_type(INCONTINUITY), _bag_i(i), _bag_j(j), _bag_k(k), _violating_node(u) {}
 
 const char *PathDecomposition::CorectnessException::what() const throw() {
 	switch (_error_type) {
-	case _edges:
+	case EDGES:
 		return "Not all edges are in path-width decomposition";
-	case _negative_vertices:
+	case NEGATIVE_VERTICES:
 		return "Vertices in bags are not in [0; |V(_g)|)";
-	case _continuity:
+	case INCONTINUITY:
 		return ("_bags["
-			+ std::to_string(_i)
+			+ std::to_string(_bag_i)
 			+ "] and _bags["
-			+ std::to_string(_k)
+			+ std::to_string(_bag_j)
 			+ "] contains "
-			+ std::to_string(_u)
+			+ std::to_string(_bag_k)
 			+ " but _bags["
-			+ std::to_string(_j)
+			+ std::to_string(_violating_node)
 			+ "] does not").c_str();
-	case _vertices:
+	case VERTICES:
 		return "Not all vertices are in path-width decomposition";
 	}
 }
@@ -49,7 +42,7 @@ bool PathDecomposition::Check() {
 		//Erasing non-unique vertices from bags
 		for (int v : bag) {
 			if (v < 0 || v >= n)
-				throw PathDecomposition::CorectnessException(_negative_vertices);
+				throw PathDecomposition::CorectnessException(NEGATIVE_VERTICES);
 		}
 	}
 
@@ -66,7 +59,7 @@ bool PathDecomposition::Check() {
 	}
 
 	for (int i = 0; i < n; ++i) {
-		if (sum[i] == 0) throw PathDecomposition::CorectnessException(_vertices);
+		if (sum[i] == 0) throw PathDecomposition::CorectnessException(VERTICES);
 		if (right[i] - left[i] + 1 != sum[i]) {
 			int j = left[i];
 			for (; 
@@ -90,7 +83,7 @@ bool PathDecomposition::Check() {
 	for (int v = 0; v < n; ++v) {
 		for (auto it = boost::adjacent_vertices(v, _g).first; it != boost::adjacent_vertices(v, _g).second; ++it) {
 			if (std::find(boost::adjacent_vertices(v, path_g).first, boost::adjacent_vertices(v, path_g).second, *it) ==
-				boost::adjacent_vertices(v, path_g).second) throw PathDecomposition::CorectnessException(_edges);
+				boost::adjacent_vertices(v, path_g).second) throw PathDecomposition::CorectnessException(EDGES);
 		}
 	}
 }
